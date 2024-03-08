@@ -12,5 +12,8 @@
     "sass": "^1.71.1"
   },
   "keywords": [],
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "typescript": "^5.4.2"
+  }
 }
