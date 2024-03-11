@@ -1,3 +1,51 @@
+type JokeReport = {
+    joke: string;
+    score: number | null;
+    date: string;
+};
+
+let reportJokes: JokeReport[] = [];
+const images: NodeListOf<HTMLImageElement> = document.querySelectorAll('.flex-item');
+
+const scores = {
+    'reshot-icon-cold-JDUYMTRXSF.svg': 1,
+    'reshot-icon-shifty-QVBDMJCAWN.svg': 2,
+    'reshot-icon-tears-SHNXUVD2GZ.svg': 3
+};
+
+images.forEach((image: HTMLImageElement) => {
+    image.addEventListener('click', (event: Event) => {
+        const imageName: string = ((event.target as HTMLImageElement).src.split('/').pop() || '');
+        const score = scores[imageName as keyof typeof scores];
+        if (score !== undefined && reportJokes.length > 0) {
+            console.log(`Has clicado en la imagen ${imageName} con una puntuación de ${score}`);
+            // Actualiza el último JokeReport con la nueva puntuación utilizando spread para crear un nuevo arreglo
+            reportJokes = [
+                ...reportJokes.slice(0, -1),
+                {
+                    ...reportJokes[reportJokes.length - 1],
+                    score: score
+                }
+            ];
+            console.log(reportJokes);
+        } else {
+            console.log(`No se encontró una puntuación para la imagen ${imageName}`);
+        }
+    });
+});
+
+function addJokeToReport(joke: string) {
+    // Añade un nuevo JokeReport utilizando spread para crear un nuevo arreglo
+    reportJokes = [
+        ...reportJokes,
+        {
+            joke: joke,
+            score: null,
+            date: new Date().toISOString().split('T')[0]
+        }
+    ];
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const jokeBtn = document.getElementById('btn')!;
     const jokeOutput = document.getElementById('joke')!;
@@ -10,20 +58,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
             const data = await response.json();
-            console.log(data);
             if (jokeOutput) {
                 jokeOutput.textContent = data.joke;
+                addJokeToReport(data.joke); 
+                console.log(reportJokes);
             }
-           
         } catch (error) {
             console.error("Error fetching joke:", error);
             jokeOutput.textContent = "Failed to fetch a joke. Please try again later.";
         }       
     }
-        if (jokeOutput && jokeBtn) {
-            jokeBtn.addEventListener('click', fetchJoke);
-        }
-        fetchJoke();
+
+    if (jokeOutput && jokeBtn) {
+        jokeBtn.addEventListener('click', fetchJoke);
+    }
+
+    fetchJoke();
 });
+
+
+
+
+
+
+
+
 
 
