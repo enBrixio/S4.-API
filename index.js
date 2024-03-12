@@ -89,7 +89,7 @@ function getWeather() {
             const temperatureSpan = document.getElementById('temp');
             weatherIcon.src = `./img/color/${weather}.svg`;
             temperatureSpan.textContent = `${temperature}°C`;
-            temperatureSpan.style.padding = '5px 10px';
+            temperatureSpan.style.padding = '10px 10px';
             temperatureSpan.style.fontSize = '2rem';
             console.log(dataWeather);
             console.log(weather);
