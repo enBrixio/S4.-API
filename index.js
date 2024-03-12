@@ -73,3 +73,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     fetchJoke();
 });
+// Path: weather.ts
+function getWeather() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const options = { method: 'GET', headers: { accept: 'application/json' } };
+        try {
+            const response = yield fetch('https://api.tomorrow.io/v4/weather/realtime?location=barcelona&apikey=8t6JxsW6QSE42qgjq8szgv5Rl6X0e8To', options);
+            const dataWeather = yield response.json();
+            if (!response.ok)
+                throw new Error("Not Found");
+            const weather = dataWeather.data.values.weatherCode;
+            const temperature = dataWeather.data.values.temperature;
+            // Actualizar el DOM
+            const weatherIcon = document.getElementById('weatherInfo');
+            const temperatureSpan = document.getElementById('temp');
+            weatherIcon.src = `./img/color/${weather}.svg`;
+            temperatureSpan.textContent = `${temperature}°C`;
+            temperatureSpan.style.padding = '5px 10px';
+            temperatureSpan.style.fontSize = '2rem';
+            console.log(dataWeather);
+            console.log(weather);
+            console.log(temperature);
+        }
+        catch (err) {
+            console.error('Error fetching weather:', err);
+        }
+    });
+}
+// Esta línea ya está correcta para asegurar que getWeather se ejecute después de que el contenido de la página haya cargado.
+document.addEventListener('DOMContentLoaded', getWeather);
