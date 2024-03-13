@@ -50,13 +50,23 @@ document.addEventListener('DOMContentLoaded', () => {
     function fetchJoke() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield fetch("https://icanhazdadjoke.com/", {
+                const responses = [
+                    {
+                        url: `https://api.chucknorris.io/jokes/random`,
+                    },
+                    {
+                        url: "https://icanhazdadjoke.com/",
+                    }
+                ];
+                const randomApi = responses[Math.floor(Math.random() * responses.length)];
+                const responde = yield fetch(randomApi.url, {
                     headers: {
                         Accept: "application/json"
                     }
                 });
-                const data = yield response.json();
+                const data = yield responde.json();
                 if (jokeOutput) {
+                    data.joke = data.value || data.joke;
                     jokeOutput.textContent = data.joke;
                     addJokeToReport(data.joke);
                     console.log(reportJokes);
@@ -102,3 +112,30 @@ function getWeather() {
 }
 // Esta línea ya está correcta para asegurar que getWeather se ejecute después de que el contenido de la página haya cargado.
 document.addEventListener('DOMContentLoaded', getWeather);
+function obtenerNombreCiudad() {
+    // Verificar si la Geolocalización está soportada
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            // Obtener las coordenadas
+            const latitud = position.coords.latitude;
+            const longitud = position.coords.longitude;
+            // Construir URL para la API de geocodificación inversa de OpenStreetMap
+            const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitud}&lon=${longitud}`;
+            // Hacer una solicitud a la API
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                // Extraer el nombre de la ciudad del objeto de respuesta
+                let ciudad = data.address.city || data.address.town || data.address.village;
+                const geoLocalizacion = document.getElementById('localizacion');
+                geoLocalizacion.textContent = `${ciudad}`;
+                console.log(`${ciudad}`);
+            })
+                .catch(error => console.log('Error al obtener la ubicación:', error));
+        });
+    }
+    else {
+        console.log("Geolocalización no está soportada en este navegador.");
+    }
+}
+obtenerNombreCiudad();
